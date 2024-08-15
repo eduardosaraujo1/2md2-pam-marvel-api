@@ -6,4 +6,4 @@
 .vscode/
 typings/
 node_modules
-/www/js/secrets.js
+www/js/secrets.js
