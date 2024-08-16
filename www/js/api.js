@@ -1,62 +1,77 @@
 /*
 Requisitos:
     Criar uma função para criar um hash MD5 chamada MD5()
-    Criar objeto global chamado 'secrets' com o seguinte modelo:
-    secrets = {
-        public: '',
-        private: '',
-    };
+    Colocar nas variaveis PRIVATE_KEY e PUBLIC_KEY com as chaves publicas e privadas. Coloque no arquivo secrets.js que já está no .gitignore
 */
-class API {
-    // returns null if querystring is null
-    static getRequestURL() {
-        const baseUrl = 'https://gateway.marvel.com/v1/public/characters';
-        const queryString = API.getAuthQueryString();
-        if (queryString) {
-            return baseUrl + queryString;
-        }
-    }
-    static secretsAreDefined() {
-        return (
-            typeof secrets === 'object' &&
-            secrets['private'] != undefined &&
-            secrets['public'] != undefined
-        );
-    }
-    // returns null if api keys are null
-    static getAuthQueryString() {
-        if (API.secretsAreDefined()) {
-            const timestamp = Date.now().toString();
-            const publicKey = secrets['public'];
-            const privateKey = secrets['private'];
-            const hash = MD5(timestamp + privateKey + publicKey);
-            return `?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
-        }
-    }
-
-    static async fetchCharacters() {
-        // validar condições para API
-        if (!API.secretsAreDefined()) {
-            throw new Error('`secrets.js` não foi montado corretamente');
-        }
-        if (typeof MD5 !== 'function') {
-            throw new Error('Método "MD5" não foi encontrado');
+class MarvelAPI {
+    static authenticateUrl(url) {
+        if (!this._checkDependencies()) {
+            return null;
         }
 
-        let response;
-        const url = API.getRequestURL();
-        try {
-            response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(
-                    `${response.status}: See error code at https://developer.marvel.com/documentation/authorization`
-                );
+        const authString = this._getAuthString();
+        const urlObj = new URL(url);
+
+        // Check if the URL already has parameters
+        if (urlObj.search) {
+            // URL already has parameters, so add the authString with &
+            if (url.endsWith('&')) {
+                // If the URL ends with &, just append the authString
+                return url + authString;
             }
+            // Otherwise, add the authString with &
+            return url + '&' + authString;
+        } else {
+            // URL does not have parameters, so add the authString with ?
+            return url + '?' + authString;
+        }
+    }
+
+    static async callAPI(url) {
+        if (!this._checkDependencies()) {
+            return null;
+        }
+
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                return await response.json();
+            }
+            throw new Error(
+                `${response.status} (${response.statusText}): See error code at https://developer.marvel.com/documentation/authorization`
+            );
         } catch (e) {
             console.error(e);
             return null;
         }
+    }
 
-        return await response.json();
+    static _foundAPIKeys() {
+        return (
+            typeof PRIVATE_KEY === 'string' && typeof PUBLIC_KEY === 'string'
+        );
+    }
+    // returns null if api keys are null
+    static _getAuthString() {
+        if (this._foundAPIKeys()) {
+            const timestamp = Date.now().toString();
+            const hash = MD5(timestamp + PRIVATE_KEY + PUBLIC_KEY);
+            return `ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash}`;
+        }
+    }
+    static _checkDependencies() {
+        if (!this._foundAPIKeys()) {
+            console.error(
+                'API Dependency fail: Could not find API one or more api key(s)'
+            );
+            return false;
+        }
+        if (typeof MD5 !== 'function') {
+            console.error(
+                "API Dependency fail: Function 'MD5' not found. Cannot generate authentication hash"
+            );
+            return false;
+        }
+        return true;
     }
 }
