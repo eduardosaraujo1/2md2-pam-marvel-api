@@ -1,7 +1,44 @@
-/*
-Requisitos:
-    Criar uma função para criar um hash MD5 chamada MD5()
-    Colocar nas variaveis PRIVATE_KEY e PUBLIC_KEY com as chaves publicas e privadas. Coloque no arquivo secrets.js que já está no .gitignore
+// TODO: Fazer a função callAPI usar como parametros chave publica chave primaria e url
+// TODO: Limpar codebase, usando código do chatgpt como referencia
+/* 
+// Função para fazer a chamada à Marvel API
+async function fetchMarvelAPI(url, publicKey, privateKey) {
+    // Captura o timestamp atual para ser usado na criação do hash
+    const ts = new Date().getTime();
+
+    // Concatena o timestamp, chave privada e chave pública para criar a string que será "hashada"
+    const stringToHash = ts + privateKey + publicKey;
+
+    // Usa a função MD5 para criar o hash necessário para autenticação
+    const hash = MD5(stringToHash);
+
+    // Monta a URL final, adicionando os parâmetros necessários (ts, chave pública, e hash)
+    const finalUrl = `${url}?ts=${ts}&apikey=${publicKey}&hash=${hash}`;
+
+    try {
+        // Realiza a chamada HTTP à URL final usando o método fetch, que retorna uma Promise
+        const response = await fetch(finalUrl);
+
+        // Verifica se a resposta é válida (código HTTP 200)
+        if (response.ok) {
+            // Converte a resposta em JSON
+            const jsonResponse = await response.json();
+            // Retorna a resposta JSON como uma string
+            return JSON.stringify(jsonResponse);
+        } else {
+            // Se a resposta não for válida, retorna uma string vazia
+            return "";
+        }
+    } catch (error) {
+        // Se ocorrer um erro durante a chamada à API, retorna uma string vazia
+        return "";
+    }
+}
+
+// Exemplo de uso da função:
+// fetchMarvelAPI('https://gateway.marvel.com/v1/public/characters', 'suaPublicKey', 'suaPrivateKey')
+//     .then(response => console.log(response))
+//     .catch(error => console.error(error));
 */
 class MarvelAPI {
     static authenticateUrl(url) {
