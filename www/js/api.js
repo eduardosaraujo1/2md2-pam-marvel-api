@@ -64,3 +64,5 @@ class MarvelAPI {
         return urlObject.toString();
     }
 }
+
+// USO EXEMPLO: const resposta = await MarvelAPI.callUrl("https://gateway.marvel.com/v1/public/characters", "e564c68db076bb8698379be85477a438", "62e3cd60de814d8957740a6dadcbabe976a2ce91")
