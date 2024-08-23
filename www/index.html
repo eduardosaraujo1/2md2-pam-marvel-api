@@ -36,7 +36,9 @@
         <div class="container">
             <h1 class="page-title">Front-End Marvel API</h1>
             <div class="input">
-                <label for="paramType" class="form-label">Tipo de Request</label>
+                <label for="paramType" class="form-label"
+                    >Tipo de Request</label
+                >
                 <select name="paramType" id="paramType">
                     <option value="characters">Characters</option>
                     <option value="comics">Comics</option>
@@ -48,29 +50,64 @@
             </div>
             <div class="ui-wrapper">
                 <div class="parameters-container">
-                    <h2>Parametros</h2>
+                    <h2>Parametros Opcionais</h2>
                     <div class="params">
                         <div class="input">
                             <label for="paramId" class="form-label">ID</label>
-                            <input class="form-control" type="number" name="paramId" id="paramId" style="width: 150px;">
+                            <input
+                                class="form-control"
+                                type="number"
+                                name="paramId"
+                                id="paramId"
+                                style="width: 150px"
+                            />
                         </div>
                         <div class="input">
-                            <label for="paramNameStartsWith" class="form-label">Nome Parcial</label>
-                            <input value="" class="form-control" type="text" name="paramNameStartsWith" id="paramNameStartsWith" style="width: 150px;">
+                            <label for="paramNameStartsWith" class="form-label"
+                                >Nome Parcial</label
+                            >
+                            <input
+                                value=""
+                                class="form-control"
+                                type="text"
+                                name="paramNameStartsWith"
+                                id="paramNameStartsWith"
+                                style="width: 150px"
+                            />
                         </div>
                         <div class="input">
-                            <label for="paramLimit" class="form-label">Limite</label>
-                            <input value="50" class="form-control" type="number" name="paramLimit" id="paramLimit" style="width: 150px;">
+                            <label for="paramLimit" class="form-label"
+                                >Limite</label
+                            >
+                            <input
+                                value="50"
+                                class="form-control"
+                                type="number"
+                                name="paramLimit"
+                                id="paramLimit"
+                                style="width: 150px"
+                            />
                         </div>
                         <div class="input">
-                            <label for="paramOffset" class="form-label">Offset</label>
-                            <input value="0" class="form-control" type="number" name="paramOffset" id="paramOffset" style="width: 150px;">
+                            <label for="paramOffset" class="form-label"
+                                >Offset</label
+                            >
+                            <input
+                                value="0"
+                                class="form-control"
+                                type="number"
+                                name="paramOffset"
+                                id="paramOffset"
+                                style="width: 150px"
+                            />
                         </div>
                     </div>
-                    <button class="btn btn-primary" id="btnExecutar">Executar</button>
+                    <button class="btn btn-primary" id="btnExecutar">
+                        Executar
+                    </button>
                 </div>
                 <div class="result">
-                    <h2>Output</h2>
+                    <h2>Resposta</h2>
                     <div class="result-container"></div>
                 </div>
             </div>

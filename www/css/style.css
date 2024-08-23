@@ -1,9 +1,10 @@
-.input  {
+.input {
     display: flex;
     flex-direction: row;
     gap: 1rem;
     font-size: 1.1em;
 }
+
 body {
     height: 100vh;
 }
@@ -15,7 +16,7 @@ body {
 }
 
 .page-title {
-    border-bottom: 1px solid rgba(0,0,0,0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.8);
     margin-bottom: 1rem;
 }
 
@@ -25,6 +26,7 @@ body {
     flex: 1;
     margin-bottom: 1rem;
     overflow: auto;
+    border: 1px solid black;
 }
 
 .parameters-container {
@@ -34,13 +36,14 @@ body {
     gap: 8px;
     flex: 1;
     overflow: auto;
+    padding: 0.5rem;
 }
 
 .params {
     flex: 1;
     align-self: stretch;
-    border-top: 1px solid rgba(0,0,0,0.8);
-    border-bottom: 1px solid rgba(0,0,0,0.8);
+    border-top: 1px solid rgba(0, 0, 0, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.8);
     overflow: auto;
     padding: 0.8rem;
 }
@@ -54,15 +57,13 @@ body {
 .result {
     display: flex;
     flex-direction: column;
-    gap: 8px;
     flex: 1;
-    background-color: pink;
-    border-left: 1px solid rgba(0,0,0,0.4);
+    border-left: 1px solid rgba(0, 0, 0, 0.4);
+    padding: 0.5rem;
 }
 
 .result-container {
-    border-top: 1px solid rgba(0,0,0,0.8);
-    border-bottom: 1px solid rgba(0,0,0,0.8);
+    border-top: 1px solid rgba(0, 0, 0, 0.8);
     padding: 0.8rem;
     align-self: stretch;
     flex: 1;
