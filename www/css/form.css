@@ -1,40 +1,49 @@
+* {
+    --black: #212529;
+}
+header {
+    background-color: var(--black, #212529);
+    display: flex;
+    flex-direction: row;
+    padding: 0.25rem 0.5rem;
+}
+header h3 {
+    color: white;
+    flex: 1;
+    user-select: none;
+}
 body {
     height: 100vh;
-    background-color: #d6d6d6;
-}
-span.required-icon {
-    color: red;
-    user-select: none;
+    background-color: hsl(0, 0%, 25%);
 }
 .container {
     display: flex;
     flex-direction: column;
-    max-width: 600px;
     height: 100%;
 }
 
 form {
-    border-radius: 2px;
     display: flex;
     flex-direction: column;
-    border: 1px solid black;
     overflow: hidden;
-    gap: 0.5rem;
-    align-items: flex-start;
+    /* margin: 1rem 0; */
+    background-color: ghostwhite;
+    border-radius: 4px;
+    box-shadow: 2px 5px 7px rgba(0, 0, 0, 0.1);
+}
+
+#btn-form-submit {
+    padding: 1rem 0;
+    border-radius: 0;
 }
 
 .form-inputs {
     height: 100%;
+    padding: 0.5rem 0.75rem;
     overflow: scroll;
     display: flex;
     flex-direction: column;
-    align-self: stretch;
-    gap: 0.125rem;
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
-}
-form fieldset {
-    background-color: ghostwhite;
-    padding: 0.75rem;
+    border-bottom: 1px solid black;
 }
 
 .input-row {
@@ -49,14 +58,6 @@ form fieldset {
     margin-bottom: 0.5rem;
 }
 
-input[type='number']:not(.has-increment-button) {
-    appearance: textfield !important;
-}
-input[type='number']:not(.has-increment-button)::-webkit-outer-spin-button,
-input[type='number']:not(.has-increment-button)::-webkit-inner-spin-button {
-    display: none;
-}
-
 .input-list .input-group {
     margin-bottom: 0.5rem;
 }
@@ -65,4 +66,17 @@ input[type='number']:not(.has-increment-button)::-webkit-inner-spin-button {
     cursor: pointer;
     color: red;
     user-select: none;
+}
+
+/* General styles */
+span.required-icon {
+    color: red;
+    user-select: none;
+}
+input[type='number']:not(.has-increment-button) {
+    appearance: textfield !important;
+}
+input[type='number']:not(.has-increment-button)::-webkit-outer-spin-button,
+input[type='number']:not(.has-increment-button)::-webkit-inner-spin-button {
+    display: none;
 }

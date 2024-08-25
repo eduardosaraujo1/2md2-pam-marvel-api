@@ -36,7 +36,17 @@ function reloadFormFields() {
     const formType = document.getElementById('apiType').value;
     // filtros básicos
     document.querySelector('.basic-filters').innerHTML =
-        formStructure[formType].basicFilters;
+        formStructure[formType].basicFilters + '<hr>';
+    // extra
+    const extraFieldset = document.querySelector('.extra');
+    const extraValue = formStructure[formType].extra;
+    if (extraValue) {
+        extraFieldset.innerHTML = extraValue + '<hr>';
+        extraFieldset.style.display = 'block';
+    } else {
+        extraFieldset.innerHTML = '';
+        extraFieldset.style.display = 'none';
+    }
     // filtros avançados
     const advFilters = document.querySelector('.advanced-filters');
     advFilters.innerHTML = formStructure[formType].advancedFilters;
@@ -47,11 +57,10 @@ function clearGeneralFields() {
     // TODO: Make a custom reset because it is resetting the typeSelect as well
 }
 
-function loadEventListeners() {
+function load() {
     const typeSelect = document.querySelector('#apiType');
     typeSelect.addEventListener('change', reloadFormFields);
-
     reloadFormFields();
 }
 
-loadEventListeners();
+load();

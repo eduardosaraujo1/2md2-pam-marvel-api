@@ -163,3 +163,5 @@ Creator: 13970
 Event: 116
 Series: 31445
 Story: 152
+
+# While the user does not provide a valid primary and public key, disable all fieldsets

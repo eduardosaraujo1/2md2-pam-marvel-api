@@ -31,9 +31,9 @@ const formStructure = {
                 id: 'apiModifiedSince',
                 type: 'date',
             })}
-            ${toggleControlsGroup({
+            ${toggleControlGroup({
                 label: 'Ordenar por',
-                radios: [
+                controls: [
                     {
                         type: 'radio',
                         label: 'Nome',
@@ -96,9 +96,9 @@ const formStructure = {
                 label: 'Modificado desde',
                 id: 'apiModifiedSince',
             })}
-            ${toggleControlsGroup({
+            ${toggleControlGroup({
                 label: 'Ordenar por',
-                radios: [
+                controls: [
                     {
                         type: 'radio',
                         label: 'Título',
@@ -141,6 +141,214 @@ const formStructure = {
                 ],
             })}
         `,
+        extra: `
+            <legend>Filtros de comics</legend>
+
+            ${selectComponent({
+                id: 'apiFormat',
+                label: 'Formato',
+                options: [
+                    {
+                        id: 'ignore',
+                        label: '',
+                    },
+                    {
+                        id: 'comic',
+                        label: 'Comic',
+                    },
+                    {
+                        id: 'magazine',
+                        label: 'Revista',
+                    },
+                    {
+                        id: 'trade paperback',
+                        label: 'Edição Encadernada',
+                    },
+                    {
+                        id: 'hardcover',
+                        label: 'Capa Dura',
+                    },
+                    {
+                        id: 'digest',
+                        label: 'Digest',
+                    },
+                    {
+                        id: 'graphic novel',
+                        label: 'Graphic Novel',
+                    },
+                    {
+                        id: 'digital comic',
+                        label: 'Quadrinho Digital',
+                    },
+                    {
+                        id: 'infinite comic',
+                        label: 'Infinite Comic',
+                    },
+                ],
+            })}
+            ${toggleControlGroup({
+                label: 'Tipo de formato',
+                controls: [
+                    {
+                        type: 'radio',
+                        label: 'Comic',
+                        idPrefix: 'apiFormatType',
+                        idSuffix: 'Comic',
+                        checked: true,
+                    },
+                    {
+                        type: 'radio',
+                        label: 'Coleção',
+                        idPrefix: 'apiFormatType',
+                        idSuffix: 'Collection',
+                    },
+                ],
+            })}
+            ${toggleControlGroup({
+                label: 'Ocultar variações?',
+                controls: [
+                    {
+                        type: 'radio',
+                        label: 'Ignore',
+                        idPrefix: 'apiNoVariants',
+                        idSuffix: 'Ignore',
+                        checked: true,
+                    },
+                    {
+                        type: 'radio',
+                        label: 'Sim',
+                        idPrefix: 'apiNoVariants',
+                        idSuffix: 'yes',
+                        checked: false,
+                    },
+                    {
+                        type: 'radio',
+                        label: 'Não',
+                        idPrefix: 'apiNoVariants',
+                        idSuffix: 'no',
+                        checked: false,
+                    },
+                ],
+            })}
+            ${toggleControlGroup({
+                label: 'Inclui versão digital?',
+                controls: [
+                    {
+                        type: 'radio',
+                        label: 'Ignore',
+                        idPrefix: 'digitalIssue',
+                        idSuffix: 'Ignore',
+                        checked: true,
+                    },
+                    {
+                        type: 'radio',
+                        label: 'Sim',
+                        idPrefix: 'digitalIssue',
+                        idSuffix: 'yes',
+                        checked: false,
+                    },
+                    {
+                        type: 'radio',
+                        label: 'Não',
+                        idPrefix: 'digitalIssue',
+                        idSuffix: 'no',
+                        checked: false,
+                    },
+                ],
+            })}
+            ${typedInput(
+                {
+                    type: 'number',
+                    label: 'Ano de inicio',
+                    id: 'apiStartYear',
+                },
+                'min="1930" max="2500" step="1" placeholder="2000"'
+            )}
+            ${selectComponent({
+                id: 'apiDateDescriptor',
+                label: 'Publicações/alterações',
+                options: [
+                    {
+                        id: 'ignore',
+                        label: 'Ignore',
+                    },
+                    {
+                        id: 'lastWeek',
+                        label: 'Semana passada',
+                    },
+                    {
+                        id: 'thisWeek',
+                        label: 'Essa semana',
+                    },
+                    {
+                        id: 'nextWeek',
+                        label: 'Semana que vem',
+                    },
+                    {
+                        id: 'lastWeek',
+                        label: 'Esse mês',
+                    },
+                ],
+            })}
+            <hr>
+            <legend>Identificadores</legend>
+            ${typedInput(
+                {
+                    type: 'int',
+                    label: 'Issue Number',
+                    id: 'apiIssueNumber',
+                },
+                'min=0 step=1 placeholder="123"'
+            )}
+            ${typedInput(
+                {
+                    type: 'text',
+                    label: 'Diamond Code',
+                    id: 'apiDiamondCode',
+                },
+                'min=0 step=1 placeholder="APR201234"'
+            )}
+            ${typedInput(
+                {
+                    type: 'int',
+                    label: 'Digital ID',
+                    id: 'apiDigitalId',
+                },
+                'min=0 step=1 placeholder="456"'
+            )}
+            ${typedInput(
+                {
+                    type: 'text',
+                    label: 'UPC',
+                    id: 'apiUpc',
+                },
+                'min=0 step=1 placeholder="759606200088"'
+            )}
+            ${typedInput(
+                {
+                    type: 'text',
+                    label: 'ISBN',
+                    id: 'apiIsbn',
+                },
+                'min=0 step=1 placeholder="9780785190659"'
+            )}
+            ${typedInput(
+                {
+                    type: 'text',
+                    label: 'EAN',
+                    id: 'apiEan',
+                },
+                'min=0 step=1 placeholder="9780785190659"'
+            )}
+            ${typedInput(
+                {
+                    type: 'text',
+                    label: 'ISSN',
+                    id: 'apiIssn',
+                },
+                'min=0 step=1 placeholder="1234-5679"'
+            )}
+        `,
     },
     creators: {
         advancedFilters: `
@@ -171,15 +379,17 @@ const formStructure = {
             ${inputWithPartial({ label: 'Primeiro nome', id: 'apiFirstName' })}
             ${inputWithPartial({ label: 'Nome do meio', id: 'apiMiddleName' })}
             ${inputWithPartial({ label: 'Sobrenome', id: 'apiLastName' })}
-            ${typedInput({
-                type: 'text',
-                label: 'Sufixo',
-                id: 'apiSuffix',
-                placeholder: 'Sr., Sra.',
-            })}
-            ${toggleControlsGroup({
+            ${typedInput(
+                {
+                    type: 'text',
+                    label: 'Sufixo',
+                    id: 'apiSuffix',
+                },
+                'placeholder="Sr., Sra."'
+            )}
+            ${toggleControlGroup({
                 label: 'Ordenar por',
-                radios: [
+                controls: [
                     {
                         type: 'radio',
                         label: 'Título',
@@ -258,13 +468,12 @@ const formStructure = {
                 placeholder: '152',
             })}
         `,
-
         basicFilters: `
             <legend>Filtros (opcionais)</legend>
             ${inputWithPartial({ label: 'Nome', id: 'apiName' })}
-            ${toggleControlsGroup({
+            ${toggleControlGroup({
                 label: 'Ordenar por',
-                radios: [
+                controls: [
                     {
                         type: 'radio',
                         label: 'Nome',
@@ -329,9 +538,9 @@ const formStructure = {
         basicFilters: `
             <legend>Filtros (opcionais)</legend>
             ${inputWithPartial({ label: 'Título', id: 'apiTitle' })}
-            ${toggleControlsGroup({
+            ${toggleControlGroup({
                 label: 'Ordenar por',
-                radios: [
+                controls: [
                     {
                         type: 'radio',
                         label: 'Nome',
@@ -370,6 +579,85 @@ const formStructure = {
                 ],
             })}
         `,
+        extra: `
+        <legend>Filtros de série</legend>
+        ${selectComponent({
+            id: 'apiSeriesType',
+            label: 'Tipo de série',
+            options: [
+                {
+                    id: 'ignore',
+                    label: '',
+                },
+                {
+                    id: 'collection',
+                    label: 'Coleção',
+                },
+                {
+                    id: 'one shot',
+                    label: 'Edição Única',
+                },
+                {
+                    id: 'limited',
+                    label: 'Série Limitada',
+                },
+                {
+                    id: 'ongoing',
+                    label: 'Em Andamento',
+                },
+            ],
+        })}
+        ${selectComponent({
+            id: 'apiSeriesContains',
+            label: 'Série contém',
+            options: [
+                {
+                    id: 'ignore',
+                    label: '',
+                },
+                {
+                    id: 'comic',
+                    label: 'Comic',
+                },
+                {
+                    id: 'magazine',
+                    label: 'Revista',
+                },
+                {
+                    id: 'trade paperback',
+                    label: 'Edição Encadernada',
+                },
+                {
+                    id: 'hardcover',
+                    label: 'Capa Dura',
+                },
+                {
+                    id: 'digest',
+                    label: 'Digest',
+                },
+                {
+                    id: 'graphic novel',
+                    label: 'Graphic Novel',
+                },
+                {
+                    id: 'digital comic',
+                    label: 'Quadrinho Digital',
+                },
+                {
+                    id: 'infinite comic',
+                    label: 'Infinite Comic',
+                },
+            ],
+        })}
+        ${typedInput(
+            {
+                type: 'number',
+                label: 'Ano de lançamento',
+                id: 'apiStartYear',
+            },
+            'min="1930" max="2500" step="1" placeholder="2000"'
+        )}
+        `,
     },
     stories: {
         advancedFilters: `
@@ -402,9 +690,9 @@ const formStructure = {
         `,
         basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${toggleControlsGroup({
+            ${toggleControlGroup({
                 label: 'Ordenar por',
-                radios: [
+                controls: [
                     {
                         type: 'radio',
                         label: 'ID',
@@ -460,8 +748,7 @@ function inputWithPartial(params) {
     </div>`;
 }
 // required label, id, type
-function typedInput(params) {
-    params['placeholder'] = params['placeholder'] || '';
+function typedInput(params, inputAttributes = '') {
     return `
         <div class="input ${params.type}-input">
             <label class="form-label" for="apiModifiedSince">
@@ -471,14 +758,14 @@ function typedInput(params) {
                 type="${params.type}"
                 name="${params.id}"
                 id="${params.id}"
-                placeholder="${params['placeholder']}"
+                ${inputAttributes}
                 class="form-control"
             />
         </div>
     `;
 }
 // required label, idPrefix, idSuffix, type, checked
-function radioOrCheckbox(params) {
+function toggleControl(params) {
     const checked = params.checked ? 'checked' : '';
     const id = params.idPrefix + params.idSuffix;
     return `
@@ -495,16 +782,15 @@ function radioOrCheckbox(params) {
     `;
 }
 // required label, array of toggle controls{ label, idPrefix, idSuffix, type, checked}
-function toggleControlsGroup(params) {
+function toggleControlGroup(params) {
     let html = `
         <div class="radio-container">
             <label class="form-label radio-label">
                 ${params.label}
-                <span class="required-icon">*</span>
             </label>\n
     `;
-    for (const rc of params.radios) {
-        html += radioOrCheckbox(rc) + '\n';
+    for (const rc of params.controls) {
+        html += toggleControl(rc) + '\n';
     }
     html += `</div> `;
     return html;
@@ -521,6 +807,27 @@ function inputList(params) {
         >
             Add
         </button>
-        <hr/>
+        <br> <br>
     </div>`;
+}
+
+function selectComponent(params) {
+    // params.id
+    // params.label
+    // params.options[]
+    // option.id
+    // option.label
+    let html = `
+    <div class="input select-input">
+        <label for="${params.id}" class="form-label">${params.label}</label>
+        <select name="${params.id}" id="${params.id}" class="form-select">\n
+    `;
+    for (const option of params.options) {
+        html += `<option value="${option.id}">${option.label}</option>\n`;
+    }
+    html += `
+        </select>
+    </div>
+    `;
+    return html;
 }
