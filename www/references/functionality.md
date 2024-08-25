@@ -72,8 +72,6 @@
 -   series (idList) Optional
 -   events (idList) Optional
 -   stories (idList) Optional
--   sharedAppearances (idList) Optional
--   collaborators (idList) Optional
 
 # Search Creators
 

@@ -93,53 +93,15 @@
                         <!-- <legend>Filtros (opcionais)</legend> -->
                     </fieldset>
                     <fieldset class="advanced-filters">
-                        <legend>Filtros avançados</legend>
-                        <div class="input-list" id="input-list-comics">
-                            <h6>Comics onde aparece</h6>
-                            <button
-                                class="btn btn-secondary input-list-add"
-                                data-input-placeholder="82970"
-                            >
-                                Add
-                            </button>
-                        </div>
-                        <hr />
-                        <div class="input-list" id="input-list-series">
-                            <h6>Series onde aparece</h6>
-                            <button
-                                class="btn btn-secondary input-list-add"
-                                data-input-placeholder="31445"
-                            >
-                                Add
-                            </button>
-                        </div>
-                        <hr />
-                        <div class="input-list" id="input-list-events">
-                            <h6>Events onde aparece</h6>
-                            <button
-                                class="btn btn-secondary input-list-add"
-                                data-input-placeholder="116"
-                            >
-                                Add
-                            </button>
-                        </div>
-                        <hr />
-                        <div class="input-list" id="input-list-stories">
-                            <h6>Stories onde aparece</h6>
-                            <button
-                                class="btn btn-secondary input-list-add"
-                                data-input-placeholder="152"
-                            >
-                                Add
-                            </button>
-                        </div>
-                        <hr />
+                        <!-- <legend>Filtros avançados</legend> -->
                     </fieldset>
                 </div>
-                <button type="submit" class="btn btn-dark">Gerar</button>
+                <button type="submit" class="btn btn-dark" id="btn-form-submit">
+                    Gerar
+                </button>
             </form>
         </div>
-        <script src="./js/formStructure.js"></script>
+        <script src="./js/formBuilder.js"></script>
         <script src="./js/form.js"></script>
         <script>
             document.querySelector('form').addEventListener('submit', (e) => {
