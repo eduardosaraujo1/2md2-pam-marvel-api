@@ -53,3 +53,7 @@ input[type='number']:not(.has-increment-button)::-webkit-outer-spin-button,
 input[type='number']:not(.has-increment-button)::-webkit-inner-spin-button {
     display: none;
 }
+
+.form-check > label {
+    user-select: none;
+}

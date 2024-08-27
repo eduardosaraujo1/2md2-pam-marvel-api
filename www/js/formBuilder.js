@@ -1,9 +1,4 @@
-// TODO: Arrumar funções para que params traduza diretamente das propriedades html (name, id) no lugar de prefix e suffix
-//     ainda existirá os parametros nomeados (label e id), mas a maioria deve ser traduzido diretamente das keys do objeto para html
 const formStructure = (() => {
-    // throw new Error(
-    //     'Falta arrumar todos os inputs para os novos parametros de cada função; Parei no OrderBy da comic falta separar o checkbox do RadioGroup'
-    // );
     function validateObjectInputs(object, inputList) {
         for (const input of inputList) {
             if (object[input] == undefined) {
@@ -24,39 +19,6 @@ const formStructure = (() => {
             }
         }
         return result;
-    }
-    /**
-     *
-     * @param {object} params { id, label }
-     * @returns
-     */
-    function InputWithPartial(params) {
-        validateObjectInputs(params, ['id', 'label']);
-        return `<div class="input-row input-with-partial">
-        <div class="input" style="flex: 1">
-            <label class="form-label" for="${params.name}">${params.label}</label>
-            <input
-                type="text"
-                name="${params.id}"
-                id="${params.id}"
-                class="form-control"
-            />
-        </div>
-        <div class="input mb-2">
-            <div class="form-check">
-                <input
-                    type="checkbox"
-                    name="${params.id}_partial"
-                    id="${params.id}_partial"
-                    class="form-check-input"
-                    checked=""
-                />
-                <label class="form-check-label" for="${params.id}_partial"
-                    >Parcial</label
-                >
-            </div>
-        </div>
-    </div>`;
     }
     /**
      *
@@ -83,7 +45,7 @@ const formStructure = (() => {
     }
     /**
      *
-     * @param {object} params - { type, id, name, value, label, checked? }
+     * @param {object} params - { type, id, name, value, label, checked?, attributes? }
      */
     function ToggleControl(params) {
         validateObjectInputs(params, ['id', 'label', 'type', 'name', 'value']);
@@ -95,6 +57,7 @@ const formStructure = (() => {
                 name="${params.name}"
                 id="${params.name + params.id}"
                 value="${params.value}"
+                ${HTMLAttributesFromObject(params.attributes)}
                 class="form-check-input"
                 ${checked}
             />
@@ -175,6 +138,7 @@ const formStructure = (() => {
     return {
         characters: {
             advancedFilters: `
+            <hr>
             <legend>Filtros avançados</legend>
             ${InputList({
                 id: 'comics',
@@ -199,7 +163,12 @@ const formStructure = (() => {
         `,
             basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${InputWithPartial({ id: 'name', label: 'Nome' })}
+            ${TypedInput({ type: 'text', id: 'name', label: 'Nome completo' })}
+            ${TypedInput({
+                type: 'text',
+                id: 'nameStartsWith',
+                label: 'Nome parcial',
+            })}
             ${TypedInput({
                 id: 'modifiedSince',
                 label: 'Modificado desde',
@@ -230,11 +199,15 @@ const formStructure = (() => {
                 label: 'Inverter ordem',
                 value: '',
                 checked: false,
+                attributes: {
+                    onchange: 'orderByCheckboxHandle(event)',
+                },
             })}
         `,
         },
         comics: {
             advancedFilters: `
+            <hr>
             <legend>Filtros avançados</legend>
             ${InputList({
                 label: 'Personagens relacionados a comic',
@@ -264,7 +237,16 @@ const formStructure = (() => {
         `,
             basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${InputWithPartial({ label: 'Título', id: 'title' })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Título completo',
+                id: 'title',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Título parcial',
+                id: 'titleStartsWith',
+            })}
             ${TypedInput({
                 type: 'date',
                 label: 'Modificado desde',
@@ -310,9 +292,11 @@ const formStructure = (() => {
                 label: 'Inverter ordem',
                 value: '',
                 checked: false,
+                attributes: {
+                    onchange: 'orderByCheckboxHandle(event)',
+                },
             })}
-        `,
-            extra: `
+            <hr>
             <legend>Filtros de comics</legend>
 
             ${SelectComponent({
@@ -320,7 +304,7 @@ const formStructure = (() => {
                 label: 'Formato',
                 options: [
                     {
-                        id: 'ignore',
+                        id: '',
                         label: '',
                     },
                     {
@@ -382,7 +366,7 @@ const formStructure = (() => {
                         label: 'Ignore',
                         id: 'ignore',
                         checked: true,
-                        value: 'ignore',
+                        value: '',
                     },
                     {
                         label: 'Sim',
@@ -406,7 +390,7 @@ const formStructure = (() => {
                         label: 'Ignore',
                         id: 'ignore',
                         checked: true,
-                        value: 'ignore',
+                        value: '',
                     },
                     {
                         label: 'Sim',
@@ -438,8 +422,8 @@ const formStructure = (() => {
                 label: 'Publicações/alterações',
                 options: [
                     {
-                        id: 'ignore',
-                        label: 'Ignore',
+                        id: '',
+                        label: '',
                     },
                     {
                         id: 'lastWeek',
@@ -535,6 +519,7 @@ const formStructure = (() => {
         },
         creators: {
             advancedFilters: `
+            <hr>
             <legend>Filtros avançados</legend>
             ${InputList({
                 label: 'Comics relacionadas ao creator',
@@ -559,9 +544,32 @@ const formStructure = (() => {
         `,
             basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${InputWithPartial({ label: 'Primeiro nome', id: 'firstName' })}
-            ${InputWithPartial({ label: 'Nome do meio', id: 'middleName' })}
-            ${InputWithPartial({ label: 'Sobrenome', id: 'lastName' })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Primeiro nome',
+                id: 'firstName',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Primeiro nome (primeiras letras)',
+                id: 'firstNameStartsWith',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Nome do meio',
+                id: 'middleName',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Nome do meio (primeiras letras)',
+                id: 'middleNameStartsWith',
+            })}
+            ${TypedInput({ type: 'text', label: 'Sobrenome', id: 'lastName' })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Sobrenome (primeiras letras)',
+                id: 'lastNameStartsWith',
+            })}
             ${TypedInput({
                 type: 'text',
                 label: 'Sufixo',
@@ -615,11 +623,15 @@ const formStructure = (() => {
                 label: 'Inverter ordem',
                 value: '',
                 checked: false,
+                attributes: {
+                    onchange: 'orderByCheckboxHandle(event)',
+                },
             })}
             `,
         },
         events: {
             advancedFilters: `
+            <hr>
             <legend>Filtros avançados</legend>
             ${InputList({
                 label: 'Creators relacionados ao evento',
@@ -649,7 +661,12 @@ const formStructure = (() => {
         `,
             basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${InputWithPartial({ label: 'Nome', id: 'name' })}
+            ${TypedInput({ type: 'text', label: 'Nome completo', id: 'name' })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Nome parcial',
+                id: 'nameStartsWith',
+            })}
             ${TypedInput({
                 id: 'modifiedSince',
                 label: 'Modificado desde',
@@ -686,11 +703,15 @@ const formStructure = (() => {
                 label: 'Inverter ordem',
                 value: '',
                 checked: false,
+                attributes: {
+                    onchange: 'orderByCheckboxHandle(event)',
+                },
             })}
         `,
         },
         series: {
             advancedFilters: `
+            <hr>
             <legend>Filtros avançados</legend>
             ${InputList({
                 label: 'Comics relacionadas à série',
@@ -720,7 +741,16 @@ const formStructure = (() => {
         `,
             basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${InputWithPartial({ label: 'Título', id: 'title' })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Título completo',
+                id: 'title',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Título parcial',
+                id: 'titleStartsWith',
+            })}
             ${TypedInput({
                 id: 'modifiedSince',
                 label: 'Modificado desde',
@@ -757,16 +787,18 @@ const formStructure = (() => {
                 label: 'Inverter ordem',
                 value: '',
                 checked: false,
+                attributes: {
+                    onchange: 'orderByCheckboxHandle(event)',
+                },
             })}
-        `,
-            extra: `
+            <hr>
         <legend>Filtros de série</legend>
         ${SelectComponent({
             id: 'seriesType',
             label: 'Tipo de série',
             options: [
                 {
-                    id: 'ignore',
+                    id: '',
                     label: '',
                 },
                 {
@@ -792,7 +824,7 @@ const formStructure = (() => {
             label: 'Série contém',
             options: [
                 {
-                    id: 'ignore',
+                    id: '',
                     label: '',
                 },
                 {
@@ -844,6 +876,7 @@ const formStructure = (() => {
         },
         stories: {
             advancedFilters: `
+            <hr>
             <legend>Filtros avançados</legend>
             ${InputList({
                 label: 'Comics relacionadas à história',
@@ -903,8 +936,58 @@ const formStructure = (() => {
                 label: 'Inverter ordem',
                 value: '',
                 checked: false,
+                attributes: {
+                    onchange: 'orderByCheckboxHandle(event)',
+                },
             })}
         `,
         },
     };
 })();
+
+// inputList logic
+function createInputListItem(placeholder = '0') {
+    const itemHtml = `
+        <div class="input-group">
+            <span class="input-group-text">ID</span>
+            <input
+                type="number"
+                placeholder="${placeholder}"
+                min="0"
+                step="1"
+                class="form-control"
+            />
+            <span
+                onclick="event.currentTarget.parentNode.remove()"
+                class="input-group-text input-list-remove"
+                >-</span
+            >
+        </div>
+    `;
+    const template = document.createElement('template');
+    template.innerHTML = itemHtml.trim();
+    return template.content.firstChild;
+}
+
+function inputListAddItem(event) {
+    const button = event.currentTarget;
+    const placeholder = button.dataset.inputPlaceholder;
+    const element = createInputListItem(placeholder);
+    button.insertAdjacentElement('beforebegin', element);
+}
+
+// Order by checkboxes
+function orderByCheckboxHandle(event) {
+    const addPrefix = (str) => (str.startsWith('-') ? str : `-${str}`);
+    const removePrefix = (str) => (str.startsWith('-') ? str.slice(1) : str);
+    const radios = document.querySelectorAll("input[name='orderBy']");
+    if (event.currentTarget.checked) {
+        radios.forEach((radio) => {
+            radio.value = addPrefix(radio.value);
+        });
+    } else {
+        radios.forEach((radio) => {
+            radio.value = removePrefix(radio.value);
+        });
+    }
+}
