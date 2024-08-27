@@ -34,3 +34,5 @@ function load() {
     typeSelect.addEventListener('change', updateFormFields);
     updateFormFields();
 }
+
+load();
