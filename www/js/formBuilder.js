@@ -873,6 +873,11 @@ const formStructure = (() => {
         `,
             basicFilters: `
             <legend>Filtros (opcionais)</legend>
+            ${TypedInput({
+                id: 'modifiedSince',
+                label: 'Modificado desde',
+                type: 'date',
+            })}
             ${RadioGroup({
                 label: 'Ordenar por',
                 name: 'orderBy',
@@ -898,11 +903,6 @@ const formStructure = (() => {
                 label: 'Inverter ordem',
                 value: '',
                 checked: false,
-            })}
-            ${TypedInput({
-                id: 'modifiedSince',
-                label: 'Modificado desde',
-                type: 'date',
             })}
         `,
         },

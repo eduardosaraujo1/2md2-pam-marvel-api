@@ -25,7 +25,14 @@ header h3 {
 
 main {
     flex: 1;
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+main::-webkit-scrollbar {
+    display: none;
 }
 
 .content {
@@ -41,6 +48,8 @@ main {
 .content > section {
     min-width: 100%;
     height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
 }
 
 #settings-icon {

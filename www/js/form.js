@@ -32,7 +32,6 @@ function inputListAddItem(event) {
 // Smart form fields
 function reloadFormFields() {
     // resetar general
-    clearGeneralFields();
     const formType = document.getElementById('requestType').value;
     // filtros básicos
     document.querySelector('.basic-filters').innerHTML =
@@ -50,11 +49,6 @@ function reloadFormFields() {
     // filtros avançados
     const advFilters = document.querySelector('.advanced-filters');
     advFilters.innerHTML = formStructure[formType].advancedFilters;
-}
-
-function clearGeneralFields() {
-    // document.querySelector('form').reset();
-    // TODO: Make a custom reset because it is resetting the typeSelect as well
 }
 
 function load() {
