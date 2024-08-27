@@ -31,7 +31,6 @@
 .jsontree_value-wrapper {
     display: block;
     overflow: visible;
-    /* width: max-content; */
     white-space: nowrap;
 }
 

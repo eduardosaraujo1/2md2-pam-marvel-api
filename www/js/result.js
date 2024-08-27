@@ -44,6 +44,7 @@ async function requestBtnOnClick(event) {
     // make request
     const formData = formReader.read();
     const url = generateAPIUrl(formData);
+    // TODO: implement config screen to get and set pub and priv key
     const result = await MarvelAPI.call(url, PUBLIC_KEY, PRIVATE_KEY);
 
     // draw result
@@ -53,8 +54,4 @@ async function requestBtnOnClick(event) {
         console.log('Coult not contact MarvelAPI');
         // TODO: Display an error message on the container
     }
-}
-
-function debug() {
-    return generateAPIUrl(formReader.read());
 }

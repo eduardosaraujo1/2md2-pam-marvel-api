@@ -13,5 +13,24 @@ function swipe(page) {
     }
 }
 
-const requestBtn = document.querySelector('#btn-form-submit');
-requestBtn.addEventListener('click', requestBtnOnClick);
+function updateFormFields() {
+    // resetar general
+    const formType = document.getElementById('requestType').value;
+    // filtros básicos
+    document.querySelector('.basic-filters').innerHTML =
+        formStructure[formType].basicFilters;
+    // filtros avançados
+    const advFilters = document.querySelector('.advanced-filters');
+    advFilters.innerHTML = formStructure[formType].advancedFilters;
+}
+
+function load() {
+    // form submit
+    const requestBtn = document.querySelector('#btn-form-submit');
+    requestBtn.addEventListener('click', requestBtnOnClick);
+
+    // form dynamic
+    const typeSelect = document.querySelector('#requestType');
+    typeSelect.addEventListener('change', updateFormFields);
+    updateFormFields();
+}
