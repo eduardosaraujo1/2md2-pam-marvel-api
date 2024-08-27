@@ -39,7 +39,7 @@ const MarvelAPI = (function () {
     }
 
     return {
-        callUrl: async function (url, publicKey, privateKey) {
+        call: async function (url, publicKey, privateKey) {
             // check dependencies
             checkAPIDependencies(url, publicKey, privateKey);
 
@@ -50,15 +50,16 @@ const MarvelAPI = (function () {
             try {
                 const r = await fetch(authUrl);
                 const rJSON = await r.json();
-                if (r.ok) {
-                    return rJSON;
-                } else {
-                    // handle errors
-                    throw new Error(
-                        `[Marvel API Error] Code: ${rJSON.code} \nMessage: ${rJSON.status}. 
-                    \nFor more information see https://developer.marvel.com/documentation/authorization`
-                    );
-                }
+                return rJSON;
+                // if (r.ok) {
+                //     return rJSON;
+                // } else {
+                //     // handle errors
+                //     throw new Error(
+                //         `[Marvel API Error] Code: ${rJSON.code} \nMessage: ${rJSON.status}.
+                //     \nFor more information see https://developer.marvel.com/documentation/authorization`
+                // );
+                // }
             } catch (e) {
                 console.error(e);
                 return null;

@@ -12,3 +12,6 @@ function swipe(page) {
         });
     }
 }
+
+const requestBtn = document.querySelector('#btn-form-submit');
+requestBtn.addEventListener('click', requestBtnOnClick);

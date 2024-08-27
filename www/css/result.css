@@ -4,7 +4,7 @@
 }
 .result-container {
     flex: 1;
-    background-color: aliceblue;
+    background-color: ghostwhite;
     padding: 0.5rem 0.75rem;
     overflow: scroll;
 }
@@ -31,4 +31,10 @@
 .jsontree_value-wrapper {
     display: block;
     overflow: visible;
+    /* width: max-content; */
+    white-space: nowrap;
+}
+
+.jsontree_node {
+    width: min-content;
 }
