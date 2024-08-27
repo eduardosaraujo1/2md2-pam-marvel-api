@@ -1,151 +1,322 @@
-const formStructure = {
-    characters: {
-        advancedFilters: `
+// TODO: Arrumar funções para que params traduza diretamente das propriedades html (name, id) no lugar de prefix e suffix
+//     ainda existirá os parametros nomeados (label e id), mas a maioria deve ser traduzido diretamente das keys do objeto para html
+const formStructure = (() => {
+    // throw new Error(
+    //     'Falta arrumar todos os inputs para os novos parametros de cada função; Parei no OrderBy da comic falta separar o checkbox do RadioGroup'
+    // );
+    function validateObjectInputs(object, inputList) {
+        for (const input of inputList) {
+            if (object[input] == undefined) {
+                throw new Error(
+                    `Object keys {${Object.keys(object).join(
+                        ', '
+                    )}} does not match inputList [${inputList}]`
+                );
+            }
+        }
+        return true;
+    }
+    function HTMLAttributesFromObject(object) {
+        let result = '';
+        if (typeof object === 'object') {
+            for (const key in object) {
+                result += `${key}=${object[key]} `;
+            }
+        }
+        return result;
+    }
+    /**
+     *
+     * @param {object} params { id, label }
+     * @returns
+     */
+    function InputWithPartial(params) {
+        validateObjectInputs(params, ['id', 'label']);
+        return `<div class="input-row input-with-partial">
+        <div class="input" style="flex: 1">
+            <label class="form-label" for="${params.name}">${params.label}</label>
+            <input
+                type="text"
+                name="${params.id}"
+                id="${params.id}"
+                class="form-control"
+            />
+        </div>
+        <div class="input mb-2">
+            <div class="form-check">
+                <input
+                    type="checkbox"
+                    name="${params.id}_partial"
+                    id="${params.id}_partial"
+                    class="form-check-input"
+                    checked=""
+                />
+                <label class="form-check-label" for="${params.id}_partial"
+                    >Parcial</label
+                >
+            </div>
+        </div>
+    </div>`;
+    }
+    /**
+     *
+     * @param {object} params { id, label, type, attributes? }
+     * @returns
+     */
+    // required
+    function TypedInput(params) {
+        validateObjectInputs(params, ['id', 'label', 'type']);
+        return `
+        <div class="input ${params.type}-input">
+            <label class="form-label" for="modifiedSince">
+            ${params.label}
+            </label>
+            <input
+                type="${params.type}"
+                name="${params.id}"
+                id="${params.id}"
+                ${HTMLAttributesFromObject(params.attributes)}
+                class="form-control"
+            />
+        </div>
+    `;
+    }
+    /**
+     *
+     * @param {object} params - { type, id, name, value, label, checked? }
+     */
+    function ToggleControl(params) {
+        validateObjectInputs(params, ['id', 'label', 'type', 'name', 'value']);
+        const checked = params.checked ? 'checked' : '';
+        return `
+        <div class="form-check ${params.type}-input">
+            <input
+                type="${params.type}"
+                name="${params.name}"
+                id="${params.name + params.id}"
+                value="${params.value}"
+                class="form-check-input"
+                ${checked}
+            />
+            <label class="form-check-label" for="${params.name + params.id}">${
+            params.label
+        }</label>
+        </div>    
+    `;
+    }
+    /**
+     *
+     * @param {object} params - { name, label, controls { id, value, label, checked? } }
+     */
+    function RadioGroup(params) {
+        validateObjectInputs(params, ['name', 'label', 'controls']);
+        let html = `
+        <div class="radio-container">
+            <label class="form-label radio-label">
+                ${params.label}
+            </label>\n
+    `;
+        for (const rc of params.controls) {
+            rc.type = 'radio';
+            rc.name = params.name;
+            html += ToggleControl(rc) + '\n';
+        }
+        html += `</div> `;
+        // debugger;
+        return html;
+    }
+
+    /**
+     *
+     * @param {object} params - { id, label, placeholder }
+     */
+    function InputList(params) {
+        validateObjectInputs(params, ['id', 'label', 'placeholder']);
+        return `<div class="input-list" id="${params.id}">
+        <h6>${params.label}</h6>
+        <button
+            type="button"
+            onclick="inputListAddItem(event)"
+            class="btn btn-secondary input-list-add"
+            data-input-placeholder="${params.placeholder}"
+        >
+            Add
+        </button>
+        <br> <br>
+    </div>`;
+    }
+
+    /**
+     *
+     * @param {object} params - { id, label, options {id, label}, attributes?}
+     */
+    function SelectComponent(params) {
+        validateObjectInputs(params, ['id', 'label', 'options']);
+        createObject = (params) => {
+            return `<option value="${params.id}">${params.label}</option>`;
+        };
+
+        const attributes = params.attributes || '';
+        let html = `
+        <div class="input select-input">
+            <label for="${params.id}" class="form-label">${params.label}</label>
+            <select name="${params.id}" id="${params.id}" ${attributes} class="form-select">\n
+        `;
+        for (const option of params.options) {
+            html += `${createObject(option)}\n`;
+        }
+        html += `
+            </select>
+        </div>
+        `;
+        return html;
+    }
+
+    return {
+        characters: {
+            advancedFilters: `
             <legend>Filtros avançados</legend>
-            ${inputList({
+            ${InputList({
+                id: 'comics',
                 label: 'Comics relacionadas a personagem',
-                idSuffix: 'comics',
                 placeholder: '82970',
             })}
-            ${inputList({
+            ${InputList({
+                id: 'series',
                 label: 'Séries relacionadas a personagem',
-                idSuffix: 'series',
                 placeholder: '31445',
             })}
-            ${inputList({
+            ${InputList({
+                id: 'events',
                 label: 'Eventos relacionados a personagem',
-                idSuffix: 'events',
                 placeholder: '116',
             })}
-            ${inputList({
+            ${InputList({
+                id: 'stories',
                 label: 'Histórias relacionadas a personagem',
-                idSuffix: 'stories',
                 placeholder: '152',
             })}
         `,
-        basicFilters: `
+            basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${inputWithPartial({ label: 'Nome', id: 'apiName' })}
-            ${typedInput({
+            ${InputWithPartial({ id: 'name', label: 'Nome' })}
+            ${TypedInput({
+                id: 'modifiedSince',
                 label: 'Modificado desde',
-                id: 'apiModifiedSince',
                 type: 'date',
             })}
-            ${toggleControlGroup({
+            ${RadioGroup({
                 label: 'Ordenar por',
+                name: 'orderBy',
                 controls: [
                     {
-                        type: 'radio',
+                        id: 'name',
+                        value: 'name',
                         label: 'Nome',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Name',
                         checked: true,
                     },
                     {
-                        type: 'radio',
+                        id: 'modified',
+                        value: 'modified',
                         label: 'Data de modificação',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'ModifyDate',
-                        checked: false,
-                    },
-                    {
-                        type: 'checkbox',
-                        label: 'Decrescente',
-                        idPrefix: 'apiOrderByOrder',
-                        idSuffix: 'Desc',
                         checked: false,
                     },
                 ],
             })}
+            ${ToggleControl({
+                type: 'checkbox',
+                name: 'orderByDesc',
+                id: '',
+                label: 'Inverter ordem',
+                value: '',
+                checked: false,
+            })}
         `,
-    },
-    comics: {
-        advancedFilters: `
+        },
+        comics: {
+            advancedFilters: `
             <legend>Filtros avançados</legend>
-            ${inputList({
+            ${InputList({
                 label: 'Personagens relacionados a comic',
-                idSuffix: 'characters',
+                id: 'characters',
                 placeholder: '1011334',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Creators relacionados a comic',
-                idSuffix: 'creators',
+                id: 'creators',
                 placeholder: '13970',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Séries relacionadas a comic',
-                idSuffix: 'series',
+                id: 'series',
                 placeholder: '31445',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Eventos relacionados a comic',
-                idSuffix: 'events',
+                id: 'events',
                 placeholder: '116',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Histórias relacionadas a comic',
-                idSuffix: 'stories',
+                id: 'stories',
                 placeholder: '152',
             })}
         `,
-        basicFilters: `
+            basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${inputWithPartial({ label: 'Título', id: 'apiTitle' })}
-            ${typedInput({
+            ${InputWithPartial({ label: 'Título', id: 'title' })}
+            ${TypedInput({
                 type: 'date',
                 label: 'Modificado desde',
-                id: 'apiModifiedSince',
+                id: 'modifiedSince',
             })}
-            ${toggleControlGroup({
+            ${RadioGroup({
                 label: 'Ordenar por',
+                name: 'orderBy',
                 controls: [
                     {
-                        type: 'radio',
+                        id: 'title',
                         label: 'Título',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Title',
+                        value: 'title',
                         checked: true,
                     },
                     {
-                        type: 'radio',
+                        id: 'issueNumber',
                         label: 'Número da edição',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Issue',
+                        value: 'issueNumber',
                     },
                     {
-                        type: 'radio',
-                        idPrefix: 'apiOrderBy',
-                        idSufix: 'FOC',
+                        id: 'focDate',
+                        value: 'focDate',
                         label: 'Data FOC',
                     },
                     {
-                        type: 'radio',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Sale',
+                        id: 'onsaleDate',
                         label: 'Ultimo desconto',
+                        value: 'onsaleDate',
                     },
                     {
-                        type: 'radio',
+                        id: 'modified',
                         label: 'Data de modificação',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'ModifyDate',
                         checked: false,
-                    },
-                    {
-                        type: 'checkbox',
-                        label: 'Decrescente',
-                        idPrefix: 'apiOrderByOrder',
-                        idSuffix: 'Desc',
-                        checked: false,
+                        value: 'modified',
                     },
                 ],
             })}
+            ${ToggleControl({
+                type: 'checkbox',
+                name: 'orderByDesc',
+                id: '',
+                label: 'Inverter ordem',
+                value: '',
+                checked: false,
+            })}
         `,
-        extra: `
+            extra: `
             <legend>Filtros de comics</legend>
 
-            ${selectComponent({
-                id: 'apiFormat',
+            ${SelectComponent({
+                id: 'format',
                 label: 'Formato',
                 options: [
                     {
@@ -186,86 +357,84 @@ const formStructure = {
                     },
                 ],
             })}
-            ${toggleControlGroup({
+            ${RadioGroup({
                 label: 'Tipo de formato',
+                name: 'formatType',
                 controls: [
                     {
-                        type: 'radio',
                         label: 'Comic',
-                        idPrefix: 'apiFormatType',
-                        idSuffix: 'Comic',
+                        id: 'comic',
+                        value: 'comic',
                         checked: true,
                     },
                     {
-                        type: 'radio',
                         label: 'Coleção',
-                        idPrefix: 'apiFormatType',
-                        idSuffix: 'Collection',
+                        id: 'collection',
+                        value: 'collection',
                     },
                 ],
             })}
-            ${toggleControlGroup({
+            ${RadioGroup({
                 label: 'Ocultar variações?',
+                name: 'noVariants',
                 controls: [
                     {
-                        type: 'radio',
                         label: 'Ignore',
-                        idPrefix: 'apiNoVariants',
-                        idSuffix: 'Ignore',
+                        id: 'ignore',
                         checked: true,
+                        value: 'ignore',
                     },
                     {
-                        type: 'radio',
                         label: 'Sim',
-                        idPrefix: 'apiNoVariants',
-                        idSuffix: 'yes',
+                        id: 'yes',
                         checked: false,
+                        value: 'true',
                     },
                     {
-                        type: 'radio',
                         label: 'Não',
-                        idPrefix: 'apiNoVariants',
-                        idSuffix: 'no',
+                        id: 'no',
                         checked: false,
+                        value: 'false',
                     },
                 ],
             })}
-            ${toggleControlGroup({
+            ${RadioGroup({
                 label: 'Inclui versão digital?',
+                name: 'hasDigitalIssue',
                 controls: [
                     {
-                        type: 'radio',
                         label: 'Ignore',
-                        idPrefix: 'digitalIssue',
-                        idSuffix: 'Ignore',
+                        id: 'ignore',
                         checked: true,
+                        value: 'ignore',
                     },
                     {
-                        type: 'radio',
                         label: 'Sim',
-                        idPrefix: 'digitalIssue',
-                        idSuffix: 'yes',
+                        id: 'yes',
                         checked: false,
+                        value: 'true',
                     },
                     {
-                        type: 'radio',
                         label: 'Não',
-                        idPrefix: 'digitalIssue',
-                        idSuffix: 'no',
+                        id: 'no',
                         checked: false,
+                        value: 'false',
                     },
                 ],
             })}
-            ${typedInput(
-                {
-                    type: 'number',
-                    label: 'Ano de inicio',
-                    id: 'apiStartYear',
+            ${TypedInput({
+                type: 'number',
+                label: 'Ano de inicio',
+                id: 'startYear',
+                attributes: {
+                    min: 1930,
+                    max: new Date().getFullYear().toString(),
+                    step: 1,
+                    placeholder: '2000',
                 },
-                'min="1930" max="2500" step="1" placeholder="2000"'
-            )}
-            ${selectComponent({
-                id: 'apiDateDescriptor',
+            })}
+            ${SelectComponent({
+                id: 'dateDescriptor',
                 label: 'Publicações/alterações',
                 options: [
                     {
@@ -292,297 +461,308 @@ const formStructure = {
             })}
             <hr>
             <legend>Identificadores</legend>
-            ${typedInput(
-                {
-                    type: 'int',
-                    label: 'Issue Number',
-                    id: 'apiIssueNumber',
+            ${TypedInput({
+                type: 'int',
+                label: 'Issue Number',
+                id: 'issueNumber',
+                attributes: {
+                    min: 0,
+                    step: 1,
+                    placeholder: '123',
                 },
-                'min=0 step=1 placeholder="123"'
-            )}
-            ${typedInput(
-                {
-                    type: 'text',
-                    label: 'Diamond Code',
-                    id: 'apiDiamondCode',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Diamond Code',
+                id: 'diamondCode',
+                attributes: {
+                    min: 0,
+                    step: 1,
+                    placeholder: 'APR201234',
                 },
-                'min=0 step=1 placeholder="APR201234"'
-            )}
-            ${typedInput(
-                {
-                    type: 'int',
-                    label: 'Digital ID',
-                    id: 'apiDigitalId',
+            })}
+            ${TypedInput({
+                type: 'int',
+                label: 'Digital ID',
+                id: 'digitalId',
+                attributes: {
+                    min: 0,
+                    step: 1,
+                    placeholder: '456',
                 },
-                'min=0 step=1 placeholder="456"'
-            )}
-            ${typedInput(
-                {
-                    type: 'text',
-                    label: 'UPC',
-                    id: 'apiUpc',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'UPC',
+                id: 'upc',
+                attributes: {
+                    min: 0,
+                    step: 1,
+                    placeholder: '759606200088',
                 },
-                'min=0 step=1 placeholder="759606200088"'
-            )}
-            ${typedInput(
-                {
-                    type: 'text',
-                    label: 'ISBN',
-                    id: 'apiIsbn',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'ISBN',
+                id: 'isbn',
+                attributes: {
+                    min: 0,
+                    step: 1,
+                    placeholder: '9780785190659',
                 },
-                'min=0 step=1 placeholder="9780785190659"'
-            )}
-            ${typedInput(
-                {
-                    type: 'text',
-                    label: 'EAN',
-                    id: 'apiEan',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'EAN',
+                id: 'ean',
+                attributes: {
+                    min: 0,
+                    step: 1,
+                    placeholder: '9780785190659',
                 },
-                'min=0 step=1 placeholder="9780785190659"'
-            )}
-            ${typedInput(
-                {
-                    type: 'text',
-                    label: 'ISSN',
-                    id: 'apiIssn',
+            })}
+            ${TypedInput({
+                type: 'text',
+                label: 'ISSN',
+                id: 'issn',
+                attributes: {
+                    min: 0,
+                    step: 1,
+                    placeholder: '1234-5679',
                 },
-                'min=0 step=1 placeholder="1234-5679"'
-            )}
+            })}
         `,
-    },
-    creators: {
-        advancedFilters: `
+        },
+        creators: {
+            advancedFilters: `
             <legend>Filtros avançados</legend>
-            ${inputList({
+            ${InputList({
                 label: 'Comics relacionadas ao creator',
-                idSuffix: 'comics',
+                id: 'comics',
                 placeholder: '82970',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Séries relacionadas ao creator',
-                idSuffix: 'series',
+                id: 'series',
                 placeholder: '31445',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Eventos relacionados ao creator',
-                idSuffix: 'events',
+                id: 'events',
                 placeholder: '116',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Histórias relacionadas ao creator',
-                idSuffix: 'stories',
+                id: 'stories',
                 placeholder: '152',
             })}
         `,
-        basicFilters: `
+            basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${inputWithPartial({ label: 'Primeiro nome', id: 'apiFirstName' })}
-            ${inputWithPartial({ label: 'Nome do meio', id: 'apiMiddleName' })}
-            ${inputWithPartial({ label: 'Sobrenome', id: 'apiLastName' })}
-            ${typedInput(
-                {
-                    type: 'text',
-                    label: 'Sufixo',
-                    id: 'apiSuffix',
+            ${InputWithPartial({ label: 'Primeiro nome', id: 'firstName' })}
+            ${InputWithPartial({ label: 'Nome do meio', id: 'middleName' })}
+            ${InputWithPartial({ label: 'Sobrenome', id: 'lastName' })}
+            ${TypedInput({
+                type: 'text',
+                label: 'Sufixo',
+                id: 'suffix',
+                attributes: {
+                    placeholder: 'Sr., Sra.',
                 },
-                'placeholder="Sr., Sra."'
-            )}
-            ${toggleControlGroup({
+            })}
+            ${TypedInput({
+                id: 'modifiedSince',
+                label: 'Modificado desde',
+                type: 'date',
+            })}
+            ${RadioGroup({
                 label: 'Ordenar por',
+                name: 'orderBy',
                 controls: [
                     {
-                        type: 'radio',
-                        label: 'Título',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Title',
+                        id: 'firstName',
+                        label: 'Primeiro nome',
+                        value: 'firstName',
                         checked: true,
                     },
                     {
-                        type: 'radio',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'FirstName',
-                        label: 'Primeiro nome',
-                    },
-                    {
-                        type: 'radio',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'MiddleName',
+                        id: 'middleName',
                         label: 'Nome do meio',
+                        value: 'middleName',
                     },
                     {
-                        type: 'radio',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'LastName',
-                        label: 'Ultimo nome',
+                        id: 'lastName',
+                        label: 'Sobrenome',
+                        value: 'lastName',
                     },
                     {
-                        type: 'radio',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Suffix',
+                        id: 'suffix',
                         label: 'Sufixo',
+                        value: 'suffix',
                     },
                     {
-                        type: 'radio',
                         label: 'Data de modificação',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'ModifyDate',
+                        id: 'modified',
                         checked: false,
-                    },
-                    {
-                        type: 'checkbox',
-                        label: 'Decrescente',
-                        idPrefix: 'apiOrderByOrder',
-                        idSuffix: 'Desc',
-                        checked: false,
+                        value: 'modified',
                     },
                 ],
             })}
-        `,
-    },
-    events: {
-        advancedFilters: `
+            ${ToggleControl({
+                type: 'checkbox',
+                name: 'orderByDesc',
+                id: '',
+                label: 'Inverter ordem',
+                value: '',
+                checked: false,
+            })}
+            `,
+        },
+        events: {
+            advancedFilters: `
             <legend>Filtros avançados</legend>
-            ${inputList({
+            ${InputList({
                 label: 'Creators relacionados ao evento',
-                idSuffix: 'creators',
+                id: 'creators',
                 placeholder: '13970',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Personagens relacionados ao evento',
-                idSuffix: 'characters',
+                id: 'characters',
                 placeholder: '1011334',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Séries relacionadas ao evento',
-                idSuffix: 'series',
+                id: 'series',
                 placeholder: '31445',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Comics relacionadas ao evento',
-                idSuffix: 'comics',
+                id: 'comics',
                 placeholder: '82970',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Histórias relacionadas ao evento',
-                idSuffix: 'stories',
+                id: 'stories',
                 placeholder: '152',
             })}
         `,
-        basicFilters: `
+            basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${inputWithPartial({ label: 'Nome', id: 'apiName' })}
-            ${toggleControlGroup({
+            ${InputWithPartial({ label: 'Nome', id: 'name' })}
+            ${TypedInput({
+                id: 'modifiedSince',
+                label: 'Modificado desde',
+                type: 'date',
+            })}
+            ${RadioGroup({
                 label: 'Ordenar por',
+                name: 'orderBy',
                 controls: [
                     {
-                        type: 'radio',
                         label: 'Nome',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Name',
+                        id: 'name',
                         checked: true,
+                        value: 'name',
                     },
                     {
-                        type: 'radio',
                         label: 'Data de inicio',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'StartDate',
+                        id: 'startDate',
                         checked: false,
+                        value: 'startDate',
                     },
                     {
-                        type: 'radio',
                         label: 'Data de modificação',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'ModifyDate',
+                        id: 'modified',
                         checked: false,
-                    },
-                    {
-                        type: 'checkbox',
-                        label: 'Decrescente',
-                        idPrefix: 'apiOrderByOrder',
-                        idSuffix: 'Desc',
-                        checked: false,
+                        value: 'modified',
                     },
                 ],
             })}
+            ${ToggleControl({
+                type: 'checkbox',
+                name: 'orderByDesc',
+                id: '',
+                label: 'Inverter ordem',
+                value: '',
+                checked: false,
+            })}
         `,
-    },
-    series: {
-        advancedFilters: `
+        },
+        series: {
+            advancedFilters: `
             <legend>Filtros avançados</legend>
-            ${inputList({
+            ${InputList({
                 label: 'Comics relacionadas à série',
-                idSuffix: 'comics',
+                id: 'comics',
                 placeholder: '82970',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Histórias relacionadas à série',
-                idSuffix: 'stories',
+                id: 'stories',
                 placeholder: '152',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Eventos relacionados à série',
-                idSuffix: 'events',
+                id: 'events',
                 placeholder: '116',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Creators relacionados à série',
-                idSuffix: 'creators',
+                id: 'creators',
                 placeholder: '13970',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Personagens relacionados à série',
-                idSuffix: 'characters',
+                id: 'characters',
                 placeholder: '1011334',
             })}
         `,
-        basicFilters: `
+            basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${inputWithPartial({ label: 'Título', id: 'apiTitle' })}
-            ${toggleControlGroup({
+            ${InputWithPartial({ label: 'Título', id: 'title' })}
+            ${TypedInput({
+                id: 'modifiedSince',
+                label: 'Modificado desde',
+                type: 'date',
+            })}
+            ${RadioGroup({
                 label: 'Ordenar por',
+                name: 'orderBy',
                 controls: [
                     {
-                        type: 'radio',
-                        label: 'Nome',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Name',
-                        checked: true,
-                    },
-                    {
-                        type: 'radio',
                         label: 'Título',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Title',
-                        checked: false,
+                        id: 'title',
+                        checked: true,
+                        value: 'title',
                     },
                     {
-                        type: 'radio',
                         label: 'Ano de inicio',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'StartYear',
+                        id: 'startYear',
                         checked: false,
+                        value: 'startYear',
                     },
                     {
-                        type: 'radio',
                         label: 'Data de modificação',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'ModifyDate',
+                        id: 'modifyDate',
                         checked: false,
-                    },
-                    {
-                        type: 'checkbox',
-                        label: 'Decrescente',
-                        idPrefix: 'apiOrderByOrder',
-                        idSuffix: 'Desc',
-                        checked: false,
+                        value: 'modified',
                     },
                 ],
             })}
+            ${ToggleControl({
+                type: 'checkbox',
+                name: 'orderByDesc',
+                id: '',
+                label: 'Inverter ordem',
+                value: '',
+                checked: false,
+            })}
         `,
-        extra: `
+            extra: `
         <legend>Filtros de série</legend>
-        ${selectComponent({
-            id: 'apiSeriesType',
+        ${SelectComponent({
+            id: 'seriesType',
             label: 'Tipo de série',
             options: [
                 {
@@ -607,8 +787,8 @@ const formStructure = {
                 },
             ],
         })}
-        ${selectComponent({
-            id: 'apiSeriesContains',
+        ${SelectComponent({
+            id: 'contains',
             label: 'Série contém',
             options: [
                 {
@@ -649,185 +829,82 @@ const formStructure = {
                 },
             ],
         })}
-        ${typedInput(
-            {
-                type: 'number',
-                label: 'Ano de lançamento',
-                id: 'apiStartYear',
+        ${TypedInput({
+            type: 'number',
+            label: 'Ano de lançamento',
+            id: 'startYear',
+            attributes: {
+                min: 1930,
+                max: new Date().getFullYear().toString(),
+                step: 1,
+                placeholder: 2000,
             },
-            'min="1930" max="2500" step="1" placeholder="2000"'
-        )}
+        })}
         `,
-    },
-    stories: {
-        advancedFilters: `
+        },
+        stories: {
+            advancedFilters: `
             <legend>Filtros avançados</legend>
-            ${inputList({
+            ${InputList({
                 label: 'Comics relacionadas à história',
-                idSuffix: 'comics',
+                id: 'comics',
                 placeholder: '82970',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Séries relacionadas à história',
-                idSuffix: 'series',
+                id: 'series',
                 placeholder: '31445',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Eventos relacionados à história',
-                idSuffix: 'events',
+                id: 'events',
                 placeholder: '116',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Creators relacionados à história',
-                idSuffix: 'creators',
+                id: 'creators',
                 placeholder: '13970',
             })}
-            ${inputList({
+            ${InputList({
                 label: 'Personagens relacionados à história',
-                idSuffix: 'characters',
+                id: 'characters',
                 placeholder: '1011334',
             })}
         `,
-        basicFilters: `
+            basicFilters: `
             <legend>Filtros (opcionais)</legend>
-            ${toggleControlGroup({
+            ${RadioGroup({
                 label: 'Ordenar por',
+                name: 'orderBy',
                 controls: [
                     {
-                        type: 'radio',
                         label: 'ID',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'Id',
+                        id: 'id',
                         checked: true,
+                        value: 'id',
                     },
                     {
-                        type: 'radio',
                         label: 'Data de modificação',
-                        idPrefix: 'apiOrderBy',
-                        idSuffix: 'ModifyDate',
+                        id: 'modifyDate',
                         checked: false,
-                    },
-                    {
-                        type: 'checkbox',
-                        label: 'Decrescente',
-                        idPrefix: 'apiOrderByOrder',
-                        idSuffix: 'Desc',
-                        checked: false,
+                        value: 'modified',
                     },
                 ],
             })}
+            ${ToggleControl({
+                type: 'checkbox',
+                name: 'orderByDesc',
+                id: '',
+                label: 'Inverter ordem',
+                value: '',
+                checked: false,
+            })}
+            ${TypedInput({
+                id: 'modifiedSince',
+                label: 'Modificado desde',
+                type: 'date',
+            })}
         `,
-    },
-};
-
-function inputWithPartial(params) {
-    return `<div class="input-row input-with-partial">
-        <div class="input" style="flex: 1">
-            <label class="form-label" for="${params.id}">${params.label}</label>
-            <input
-                type="text"
-                name="${params.id}"
-                id="${params.id}"
-                class="form-control"
-            />
-        </div>
-        <div class="input mb-2">
-            <div class="form-check">
-                <input
-                    type="checkbox"
-                    name="${params.id}Partial"
-                    id="${params.id}Partial"
-                    class="form-check-input"
-                    checked=""
-                />
-                <label class="form-check-label" for="apiNamePartial"
-                    >Parcial</label
-                >
-            </div>
-        </div>
-    </div>`;
-}
-// required label, id, type
-function typedInput(params, inputAttributes = '') {
-    return `
-        <div class="input ${params.type}-input">
-            <label class="form-label" for="apiModifiedSince">
-            ${params.label}
-            </label>
-            <input
-                type="${params.type}"
-                name="${params.id}"
-                id="${params.id}"
-                ${inputAttributes}
-                class="form-control"
-            />
-        </div>
-    `;
-}
-// required label, idPrefix, idSuffix, type, checked
-function toggleControl(params) {
-    const checked = params.checked ? 'checked' : '';
-    const id = params.idPrefix + params.idSuffix;
-    return `
-        <div class="form-check ${params.type}-input">
-            <input
-                type="${params.type}"
-                name="${params.idPrefix}"
-                id="${id}"
-                class="form-check-input"
-                ${checked}
-            />
-            <label class="form-check-label" for="${id}">${params.label}</label>
-        </div>    
-    `;
-}
-// required label, array of toggle controls{ label, idPrefix, idSuffix, type, checked}
-function toggleControlGroup(params) {
-    let html = `
-        <div class="radio-container">
-            <label class="form-label radio-label">
-                ${params.label}
-            </label>\n
-    `;
-    for (const rc of params.controls) {
-        html += toggleControl(rc) + '\n';
-    }
-    html += `</div> `;
-    return html;
-}
-
-// required label, idSuffix, placeholder,
-function inputList(params) {
-    return `<div class="input-list" id="inputList${params.idSuffix}">
-        <h6>${params.label}</h6>
-        <button
-            onclick="inputListAddItem(event)"
-            class="btn btn-secondary input-list-add"
-            data-input-placeholder="${params.placeholder}"
-        >
-            Add
-        </button>
-        <br> <br>
-    </div>`;
-}
-
-function selectComponent(params) {
-    // params.id
-    // params.label
-    // params.options[]
-    // option.id
-    // option.label
-    let html = `
-    <div class="input select-input">
-        <label for="${params.id}" class="form-label">${params.label}</label>
-        <select name="${params.id}" id="${params.id}" class="form-select">\n
-    `;
-    for (const option of params.options) {
-        html += `<option value="${option.id}">${option.label}</option>\n`;
-    }
-    html += `
-        </select>
-    </div>
-    `;
-    return html;
-}
+        },
+    };
+})();

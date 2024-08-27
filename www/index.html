@@ -63,15 +63,15 @@
                             <div class="request">
                                 <legend>Geral</legend>
                                 <div class="input">
-                                    <label class="form-label" for="apiType">
+                                    <label class="form-label" for="requestType">
                                         <b
                                             >Tipo
                                             <span class="required-icon">*</span>
                                         </b>
                                     </label>
                                     <select
-                                        name="apiType"
-                                        id="apiType"
+                                        name="requestType"
+                                        id="requestType"
                                         class="form-select"
                                     >
                                         <option value="characters">
@@ -87,7 +87,7 @@
                                     </select>
                                 </div>
                                 <div class="input">
-                                    <label class="form-label" for="apiId"
+                                    <label class="form-label" for="id"
                                         >Id</label
                                     >
                                     <input
@@ -95,13 +95,13 @@
                                         placeholder="1011334"
                                         min="0"
                                         step="1"
-                                        id="apiId"
-                                        name="apiId"
+                                        id="id"
+                                        name="id"
                                         class="form-control"
                                     />
                                 </div>
                                 <div class="input">
-                                    <label class="form-label" for="apiLimit"
+                                    <label class="form-label" for="limit"
                                         >Limit</label
                                     >
                                     <input
@@ -112,13 +112,13 @@
                                         min="0"
                                         max="100"
                                         required
-                                        name="apiLimit"
-                                        id="apiModifiedSince"
+                                        name="limit"
+                                        id="limit"
                                         class="form-control"
                                     />
                                 </div>
                                 <div class="input">
-                                    <label class="form-label" for="apiOffset"
+                                    <label class="form-label" for="offset"
                                         >Offset</label
                                     >
                                     <input
@@ -128,8 +128,8 @@
                                         step="1"
                                         min="0"
                                         required
-                                        name="apiOffset"
-                                        id="apiModifiedSince"
+                                        name="offset"
+                                        id="offset"
                                         class="form-control"
                                     />
                                 </div>
@@ -139,13 +139,27 @@
                             <div class="extra"></div>
                             <div class="advanced-filters"></div>
                         </fieldset>
-                        <button
-                            type="submit"
-                            class="btn btn-secondary"
-                            id="btn-form-submit"
-                        >
-                            Gerar
-                        </button>
+                        <div class="d-flex align-items-stretch">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                id="btn-form-submit"
+                                style="
+                                    flex: 1;
+                                    border-right: 1px solid ghostwhite;
+                                "
+                            >
+                                Gerar
+                            </button>
+                            <button
+                                type="reset"
+                                class="btn btn-secondary"
+                                id="btn-form-submit"
+                                style="flex: 1"
+                            >
+                                Reset
+                            </button>
+                        </div>
                     </form>
                 </section>
                 <section class="api-result">

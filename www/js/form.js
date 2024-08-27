@@ -33,7 +33,7 @@ function inputListAddItem(event) {
 function reloadFormFields() {
     // resetar general
     clearGeneralFields();
-    const formType = document.getElementById('apiType').value;
+    const formType = document.getElementById('requestType').value;
     // filtros básicos
     document.querySelector('.basic-filters').innerHTML =
         formStructure[formType].basicFilters + '<hr>';
@@ -58,7 +58,7 @@ function clearGeneralFields() {
 }
 
 function load() {
-    const typeSelect = document.querySelector('#apiType');
+    const typeSelect = document.querySelector('#requestType');
     typeSelect.addEventListener('change', reloadFormFields);
     reloadFormFields();
 }

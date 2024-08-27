@@ -18,10 +18,27 @@ function loadSwipeHandler() {
     document.addEventListener('touchend', (event) => {
         touchEndPosX = event.changedTouches[0].screenX;
         const diff = touchEndPosX - touchStartPosX;
-        if (Math.abs(diff) > 100) {
+        if (diff < -100) {
             swipe(true);
         }
     });
 }
 
-loadSwipeHandler();
+function load() {
+    loadSwipeHandler();
+}
+
+load();
+
+function getAllFormElements() {
+    // Get all input, select, and textarea elements
+    const elements = document
+        .querySelector('form')
+        .querySelectorAll('input, select, textarea');
+    const array = Array.from(elements);
+    const data = array.map((e) => {
+        return e.name;
+    });
+
+    return [...new Set(data)];
+}
