@@ -13,7 +13,8 @@ form {
 .form-inputs {
     height: 100%;
     padding: 0.5rem 0.75rem;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid black;
