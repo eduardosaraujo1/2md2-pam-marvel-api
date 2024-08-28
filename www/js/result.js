@@ -50,14 +50,9 @@ async function requestBtnOnClick(event) {
 
     // TODO: implement config screen to get and set pub and priv key
     // make request
-    const result = await MarvelAPI.call(url, PUBLIC_KEY, PRIVATE_KEY);
+    const result = await MarvelAPI.call(url, publicKey(), privateKey());
 
     // remove loader and draw result
     container.innerHTML = '';
-    if (result != null) {
-        jsonTree.create(result, container);
-    } else {
-        console.log('Coult not contact MarvelAPI');
-        // TODO: Display an error message on the container
-    }
+    jsonTree.create(result, container);
 }

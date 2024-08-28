@@ -33,6 +33,17 @@ function load() {
     const typeSelect = document.querySelector('#requestType');
     typeSelect.addEventListener('change', updateFormFields);
     updateFormFields();
+
+    // set default config values if needed
+    if (!privateKey()) {
+        localStorage.setItem('privkey', '');
+    }
+    if (!publicKey()) {
+        localStorage.setItem('pubkey', DEFAULT_PUB_KEY);
+    }
+
+    // Pull default values from config
+    overrideInputs();
 }
 
 load();

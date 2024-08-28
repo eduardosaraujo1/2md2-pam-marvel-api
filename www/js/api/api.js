@@ -1,53 +1,88 @@
 const MarvelAPI = (function () {
+    /**
+     * Important: ALLOWS AN EMPTY KEY
+     */
+    function validateKey(key) {
+        // regex valida apenas que contem caracteres de hexadecimal
+        key = key || '';
+        const hexPattern = /^[0-9a-f]*$/;
+        return hexPattern.test(key);
+    }
+    function validateUrl(url) {
+        return !url || !url.includes('gateway.marvel.com');
+    }
     function checkAPIDependencies(url, publicKey, privateKey) {
+        function handleError(message) {
+            console.error(message);
+            return message;
+        }
+
         if (typeof MD5 !== 'function') {
-            console.error("[API Dependency fail] Function 'MD5' not found");
-            return null;
+            return handleError(
+                "[API Dependency fail] Function 'MD5' not found"
+            );
         }
 
-        // url must be from gateway.marvel.com
-        if (!url || !url.includes('gateway.marvel.com')) {
-            console.error(`[API Dependency fail] Invalid URL: ${url}`);
-            return null;
+        if (validateUrl(url)) {
+            return handleError(`[API Dependency fail] Invalid URL: ${url}`);
         }
 
-        if (!publicKey) {
-            console.error(`[API Dependency fail] Null public key`);
-            return null;
+        if (!publicKey || !validateKey(publicKey)) {
+            return handleError(
+                `[API Dependency fail] Invalid public key: ${publicKey}`
+            );
         }
 
-        if (!privateKey) {
-            console.error(`[API Dependency fail] Null private key`);
-            return null;
+        if (!validateKey(privateKey)) {
+            return handleError(`[API Dependency fail] Null private key`);
         }
+
+        return 'valid';
     }
 
     function addAuthParameters(url, publicKey, privateKey) {
-        // Get authentication data
-        const ts = Date.now().toString();
-        const apikey = publicKey;
-        const hash = MD5(ts + privateKey + publicKey);
-
-        // build URL
+        if (!url) return '';
+        if (!publicKey) return url;
         const urlObject = new URL(url);
         const urlParams = urlObject.searchParams;
-        urlParams.set('ts', ts);
-        urlParams.set('apikey', apikey);
-        urlParams.set('hash', hash);
+
+        // Public params
+        urlParams.set('apikey', publicKey);
+
+        // Private params
+        if (privateKey) {
+            const ts = Date.now().toString();
+            const hash = MD5(ts + privateKey + publicKey);
+            urlParams.set('ts', ts);
+            urlParams.set('hash', hash);
+        }
 
         return urlObject.toString();
     }
-
+    /**
+     *
+     * @param {string} url API Url. Must include prefix (required)
+     * @param {string} publicKey Public key for the API (required)
+     * @param {string} privateKey Private key for the API (optional)
+     * @returns
+     */
     return {
-        call: async function (url, publicKey, privateKey) {
+        call: async (url, publicKey, privateKey) => {
             // check dependencies
-            checkAPIDependencies(url, publicKey, privateKey);
+            const check = checkAPIDependencies(url, publicKey, privateKey);
+            if (check !== 'valid') {
+                return {
+                    code: -1,
+                    message: check,
+                };
+            }
 
             // add authentication parameters to url
             const authUrl = addAuthParameters(url, publicKey, privateKey);
 
             // attempt request
             try {
+                // TODO: Make a way to cancel request if another is made
                 const r = await fetch(authUrl);
                 const rJSON = await r.json();
                 return rJSON;
@@ -62,10 +97,11 @@ const MarvelAPI = (function () {
                 // }
             } catch (e) {
                 console.error(e);
-                return null;
+                return {
+                    code: 0,
+                    status: e.message,
+                };
             }
         },
     };
 })();
-
-// USO EXEMPLO: const resposta = await MarvelAPI.callUrl("https://gateway.marvel.com/v1/public/characters", "e564c68db076bb8698379be85477a438", "62e3cd60de814d8957740a6dadcbabe976a2ce91")
