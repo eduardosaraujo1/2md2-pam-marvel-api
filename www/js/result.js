@@ -35,19 +35,25 @@ async function requestBtnOnClick(event) {
     const container = document.querySelector('.result-container');
     container.innerHTML = '';
 
-    // TODO: FINISH THIS
     // add loader icon to container (wip)
+    const loader = document.createElement('div');
+    loader.classList.add('loader');
+    container.appendChild(loader);
 
     // scroll
     swipe(2);
 
-    // make request
+    // get url and display it
     const formData = formReader.read();
     const url = generateAPIUrl(formData);
+    document.getElementById('generatedUrl').innerHTML = url;
+
     // TODO: implement config screen to get and set pub and priv key
+    // make request
     const result = await MarvelAPI.call(url, PUBLIC_KEY, PRIVATE_KEY);
 
-    // draw result
+    // remove loader and draw result
+    container.innerHTML = '';
     if (result != null) {
         jsonTree.create(result, container);
     } else {

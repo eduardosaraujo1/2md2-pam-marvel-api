@@ -148,7 +148,7 @@
                                     border-right: 1px solid ghostwhite;
                                 "
                             >
-                                Requisitar
+                                Request
                             </button>
                             <button
                                 type="reset"
@@ -156,13 +156,40 @@
                                 id="btn-form-submit"
                                 style="flex: 1"
                             >
-                                Reset
+                                Limpar
                             </button>
                         </div>
                     </form>
                 </section>
                 <section class="api-result">
-                    <div class="result-container"></div>
+                    <div class="result">
+                        <div class="result-title">
+                            URL:
+                            <span id="generatedUrl">Vazio</span>
+                        </div>
+                        <div class="result-container">
+                            <ul class="jsontree_tree clearfix">
+                                <li
+                                    class="jsontree_node jsontree_node_complex jsontree_node_expanded jsontree_node_empty"
+                                >
+                                    <div class="jsontree_value-wrapper">
+                                        <div
+                                            class="jsontree_value jsontree_value_object"
+                                        >
+                                            <b>{</b>
+                                            <span class="jsontree_show-more"
+                                                >Object</span
+                                            >
+                                            <ul
+                                                class="jsontree_child-nodes"
+                                            ></ul>
+                                            <b>}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <button
                         onclick="swipe(1)"
                         id="back-to-form"
